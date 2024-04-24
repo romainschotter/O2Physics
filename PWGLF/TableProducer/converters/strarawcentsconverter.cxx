@@ -21,7 +21,6 @@ struct strarawcentsconverter {
   Produces<aod::StraRawCents_001> straRawCents_001;
   Produces<aod::StraRawCents_003> straRawCents_003;
 
-
   void process000to001(aod::StraRawCents_000 const& straRawCents_000)
   {
     for (auto& values : straRawCents_000) {
