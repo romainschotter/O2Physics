@@ -183,3 +183,8 @@ o2physics_add_dpl_workflow(kshortlambda
     SOURCES kshortlambda.cxx
     PUBLIC_LINK_LIBRARIES O2Physics::AnalysisCore
     COMPONENT_NAME Analysis)
+
+o2physics_add_dpl_workflow(kstar-to-k0gamma
+    SOURCES kstarToK0Gamma.cxx
+    PUBLIC_LINK_LIBRARIES O2Physics::AnalysisCore O2Physics::MLCore O2Physics::EventFilteringUtils
+    COMPONENT_NAME Analysis)
