@@ -2160,3 +2160,4 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
     adaptAnalysisTask<StrangenessBuilder>(cfgc),
     adaptAnalysisTask<strangenessbuilderInitializer>(cfgc)};
 }
+ 
