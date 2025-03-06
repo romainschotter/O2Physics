@@ -170,7 +170,7 @@ struct straCents {
 
     mRunNumber = 0;
     lCalibLoaded = false;
-    
+
     hVtxZFV0A = nullptr;
     hVtxZFT0A = nullptr;
     hVtxZFT0C = nullptr;
@@ -266,7 +266,7 @@ struct straCents {
           TFormula* f = reinterpret_cast<TFormula*>(lCalibObjects->FindObject(ccdbhname));
           return f;
         };
-        
+
         // V0M
         Run2V0MInfo.mhVtxAmpCorrV0A = getccdb("hVtx_fAmplitude_V0A_Normalized");
         Run2V0MInfo.mhVtxAmpCorrV0C = getccdb("hVtx_fAmplitude_V0C_Normalized");
@@ -334,7 +334,7 @@ struct straCents {
             LOGF(warning, "Calibration information from SPD clusters for run %d corrupted, will fill SPD clusters tables with dummy values", collision.runNumber());
           }
         }
-      } else { // we are in Run 3
+      } else {                                                                                                                                                                 // we are in Run 3
         auto getccdb = [lCalibObjects, collision](struct CalibrationInfo& estimator, const Configurable<std::string> generatorName, const Configurable<bool> notCrashOnNull) { // TODO: to consider the name inside the estimator structure
           estimator.mhMultSelCalib = reinterpret_cast<TH1*>(lCalibObjects->FindObject(TString::Format("hCalibZeq%s", estimator.name.c_str()).Data()));
           estimator.mMCScale = reinterpret_cast<TFormula*>(lCalibObjects->FindObject(TString::Format("%s-%s", generatorName->c_str(), estimator.name.c_str()).Data()));
@@ -378,7 +378,7 @@ struct straCents {
         hVtxZNTracks = static_cast<TProfile*>(lCalibObjects->FindObject("hVtxZNTracksPV"));
         lCalibLoaded = true;
         // Capture error
-        if (!hVtxZFV0A || !hVtxZFT0A || !hVtxZFT0C || !hVtxZFDDA || !hVtxZFDDC || !hVtxZNTracks) {  
+        if (!hVtxZFV0A || !hVtxZFT0A || !hVtxZFT0C || !hVtxZFDDA || !hVtxZFDDC || !hVtxZNTracks) {
           LOGF(error, "Problem loading CCDB objects! Please check");
           lCalibLoaded = false;
         }
@@ -422,7 +422,7 @@ struct straCents {
         centRun2V0M = Run2V0MInfo.mhMultSelCalib->GetBinContent(Run2V0MInfo.mhMultSelCalib->FindFixBin(v0m));
       }
       LOGF(debug, "centRun2V0M=%.0f", centRun2V0M);
-    
+
       // Run 2 V0A
       if (Run2V0AInfo.mCalibrationStored) {
         float v0a = collision.multFV0A() * Run2V0AInfo.mhVtxAmpCorrV0A->GetBinContent(Run2V0AInfo.mhVtxAmpCorrV0A->FindFixBin(collision.posZ()));
@@ -436,7 +436,7 @@ struct straCents {
         centRun2SPDTrks = Run2SPDTksInfo.mhMultSelCalib->GetBinContent(Run2SPDTksInfo.mhMultSelCalib->FindFixBin(spdm));
       }
       LOGF(debug, "centSPDTracklets=%.0f", centRun2SPDTrks);
-    
+
       // Run 2 SPD Cls
       if (Run2SPDClsInfo.mCalibrationStored) {
         // spdClustersL0 and spdClustersL1 not available in strangeness data model
@@ -467,7 +467,7 @@ struct straCents {
       if (std::fabs(collision.posZ()) < 15.0f && hVtxZFV0A) {
         multZeqFV0A = hVtxZFV0A->Interpolate(0.0) * collision.multFV0A() / hVtxZFV0A->Interpolate(collision.posZ());
       }
-      if (std::fabs(collision.posZ()) < 15.0f && hVtxZFT0A) { 
+      if (std::fabs(collision.posZ()) < 15.0f && hVtxZFT0A) {
         multZeqFT0A = hVtxZFT0A->Interpolate(0.0) * collision.multFT0A() / hVtxZFT0A->Interpolate(collision.posZ());
       }
       if (std::fabs(collision.posZ()) < 15.0f && hVtxZFT0C) {
