@@ -442,5 +442,5 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
     adaptAnalysisTask<cascadeprefilter>(cfgc, TaskName{"lf-cascadeprefilter"}),
     adaptAnalysisTask<cascadefinder>(cfgc, TaskName{"lf-cascadefinder"}),
     adaptAnalysisTask<cascadefinderQA>(cfgc, TaskName{"lf-cascadefinderQA"})};
-    // adaptAnalysisTask<cascadeinitializer>(cfgc, TaskName{"lf-cascadeinitializer"})};
+  // adaptAnalysisTask<cascadeinitializer>(cfgc, TaskName{"lf-cascadeinitializer"})};
 }

@@ -564,5 +564,5 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
     adaptAnalysisTask<createPCM>(cfgc, TaskName{"v0-finder"})};
-    // adaptAnalysisTask<v0Initializer>(cfgc, TaskName{"v0-initializer"})};
+  // adaptAnalysisTask<v0Initializer>(cfgc, TaskName{"v0-initializer"})};
 }

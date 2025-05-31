@@ -2508,5 +2508,5 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
     adaptAnalysisTask<StrangenessBuilder>(cfgc)};
-    // adaptAnalysisTask<strangenessbuilderInitializer>(cfgc)};
+  // adaptAnalysisTask<strangenessbuilderInitializer>(cfgc)};
 }

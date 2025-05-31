@@ -1821,5 +1821,5 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
     adaptAnalysisTask<lambdakzeroBuilder>(cfgc),
     adaptAnalysisTask<lambdakzeroPreselector>(cfgc),
     adaptAnalysisTask<lambdakzeroV0DataLinkBuilder>(cfgc)};
-    // adaptAnalysisTask<lambdakzeroInitializer>(cfgc)};
+  // adaptAnalysisTask<lambdakzeroInitializer>(cfgc)};
 }
