@@ -1290,6 +1290,9 @@ struct derivedlambdakzeroanalysis {
     if (negTrackExtra.detectorMap() != o2::aod::track::TPC)
       BITSET(bitMap, selNegNotTPCOnly);
 
+    if (!posTrackExtra.hasITS() || !negTrackExtra.hasITS())
+      LOGF(info, "V0Type: %d at pT = %4.2f GeV/c and R = %4.1f cm (pos has ITS ? %d / neg has ITS ? %d)!", v0.v0Type(), v0.pt(), v0.v0radius(), posTrackExtra.hasITS(), negTrackExtra.hasITS());
+
     // proper lifetime
     if (v0.distovertotmom(collision.posX(), collision.posY(), collision.posZ()) * o2::constants::physics::MassLambda0 < v0Selections.lifetimecut->get("lifetimecutLambda"))
       BITSET(bitMap, selLambdaCTau);
