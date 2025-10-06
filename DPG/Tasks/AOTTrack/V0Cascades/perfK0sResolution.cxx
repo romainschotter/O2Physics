@@ -222,7 +222,7 @@ struct perfK0sResolution {
     rK0sResolution.get<TH1>(HIST("hEventSelection"))->GetXaxis()->SetBinLabel(18, "INEL>1");
     rK0sResolution.get<TH1>(HIST("hEventSelection"))->GetXaxis()->SetBinLabel(19, "Below min occup.");
     rK0sResolution.get<TH1>(HIST("hEventSelection"))->GetXaxis()->SetBinLabel(20, "Above max occup.");
-    
+
     rK0sResolution.add("hEventCentrality", "hEventCentrality", kTH1D, {{101, 0.0f, 101.0f}});
     rK0sResolution.add("hEventOccupancy", "hEventOccupancy", kTH1D, {occupancyAxis});
 
@@ -487,7 +487,7 @@ struct perfK0sResolution {
       return false;
     if (v0.dcaV0daughters() > v0Selections.dcav0dau)
       return false;
-    
+
     if (v0.distovertotmom(collision.posX(), collision.posY(), collision.posZ()) * o2::constants::physics::MassK0Short > v0Selections.lifetimecut->get("lifetimecutK0S")) {
       return false;
     }
@@ -504,7 +504,7 @@ struct perfK0sResolution {
       return false;
     if (ntrack.itsNCls() < v0Selections.minITSclusters)
       return false;
-     // check maximum ITS chi2 per clusters
+    // check maximum ITS chi2 per clusters
     if (ptrack.itsChi2NCl() > v0Selections.maxITSchi2PerNcls)
       return false;
     if (ntrack.itsChi2NCl() > v0Selections.maxITSchi2PerNcls)
