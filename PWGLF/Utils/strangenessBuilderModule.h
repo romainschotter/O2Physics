@@ -597,7 +597,7 @@ class BuilderModule
       hPreselectionV0s->GetXaxis()->SetBinLabel(16, "#gamma, K^{0}_{S}, #Lambda, #bar{#Lambda}");
     }
 
-    auto hSuccessfulPropagV0s = histos.template add<TH2>("hSuccessfulPropagV0s", "hSuccessfulPropagV0s", o2::framework::kTH2D, {{4, -0.5f, 3.5f}, {20, 0, 10}});
+    auto hSuccessfulPropagV0s = histos.template add<TH2>("hSuccessfulPropagV0s", "hSuccessfulPropagV0s", o2::framework::kTH2D, {{4, -0.5f, 3.5f}, {200, 0, 10}});
     hSuccessfulPropagV0s->GetXaxis()->SetBinLabel(1, "All");
     hSuccessfulPropagV0s->GetXaxis()->SetBinLabel(2, "Pos. to PV");
     hSuccessfulPropagV0s->GetXaxis()->SetBinLabel(3, "Neg. to PV");
@@ -623,7 +623,7 @@ class BuilderModule
       hPreselectionCascades->GetXaxis()->SetBinLabel(16, "#Xi^{-}, #Xi^{+}, #Omega^{-}, #Omega^{+}");
     }
 
-    auto hSuccessfulPropagCascades = histos.template add<TH2>("hSuccessfulPropagCascades", "hSuccessfulPropagCascades", o2::framework::kTH2D, {{6, -0.5f, 5.5f}, {20, 0, 10}});
+    auto hSuccessfulPropagCascades = histos.template add<TH2>("hSuccessfulPropagCascades", "hSuccessfulPropagCascades", o2::framework::kTH2D, {{6, -0.5f, 5.5f}, {200, 0, 10}});
     hSuccessfulPropagCascades->GetXaxis()->SetBinLabel(1, "All");
     hSuccessfulPropagCascades->GetXaxis()->SetBinLabel(2, "Pos. to PV");
     hSuccessfulPropagCascades->GetXaxis()->SetBinLabel(3, "Neg. to PV");
