@@ -145,7 +145,7 @@ static const int defaultParameters[nTablesConst][nParameters]{
 
 // table index : match order above
 enum tableIndex { kFV0Mults,       // standard
-                  kFITExtraMults,  // standard
+                  kFV0AOuterMults, // standard
                   kFT0Mults,       // standard
                   kFDDMults,       // standard
                   kZDCMults,       // standard
@@ -191,8 +191,7 @@ struct products : o2::framework::ProducesGroup {
   //__________________________________________________
   // multiplicity tables
   o2::framework::Produces<aod::FV0Mults> tableFV0;
-  o2::framework::Produces<aod::FITExtraMults> tableFITExtraMults;
-  o2::framework::Produces<aod::FV0AOuterMults> tableFV0AOuterMults;
+  o2::framework::Produces<aod::FV0AOuterMults> tableFV0AOuter;
   o2::framework::Produces<aod::FT0Mults> tableFT0;
   o2::framework::Produces<aod::FDDMults> tableFDD;
   o2::framework::Produces<aod::ZDCMults> tableZDC;
@@ -257,7 +256,6 @@ struct multEntry {
   float multZPA = 0.0f;
   float multZPC = 0.0f;
   int multTracklets = 0;
-  uint8_t fitTriggerMask{};
 
   int multNContribs = 0;        // PVMult 0.8
   int multNContribsEta1 = 0;    // PVMult 1.0
@@ -307,8 +305,6 @@ struct standardConfigurables : o2::framework::ConfigurableGroup {
 
   // Autoconfigure process functions
   o2::framework::Configurable<bool> autoConfigureProcess{"autoConfigureProcess", false, "if true, will configure process function switches based on metadata"};
-
-  o2::framework::Configurable<bool> doNTrackStudies{"doNTrackStudies", true, "if true, will fill Ntracks in MultsExtra"};
 
   // do vertex-Z equalized or not
   o2::framework::Configurable<int> doVertexZeq{"doVertexZeq", 1, "if 1: do vertex Z eq mult table"};
@@ -709,7 +705,6 @@ class MultModule
     }
     if (collision.has_foundFT0()) {
       const auto& ft0 = collision.foundFT0();
-      mults.fitTriggerMask = ft0.triggerMask();
       for (const auto& amplitude : ft0.amplitudeA()) {
         mults.multFT0A += amplitude;
       }
@@ -755,9 +750,8 @@ class MultModule
     if (internalOpts.mEnabledTables[kFV0Mults]) {
       cursors.tableFV0(mults.multFV0A, mults.multFV0C);
     }
-    if (internalOpts.mEnabledTables[kFITExtraMults]) {
-      cursors.tableFITExtraMults(mults.multFV0AOuter, mults.fitTriggerMask);
-      cursors.tableFV0AOuterMults(mults.multFV0AOuter); // Keep for backwards compatibility
+    if (internalOpts.mEnabledTables[kFV0AOuterMults]) {
+      cursors.tableFV0AOuter(mults.multFV0AOuter);
     }
     if (internalOpts.mEnabledTables[kFT0Mults]) {
       cursors.tableFT0(mults.multFT0A, mults.multFT0C);
@@ -905,15 +899,9 @@ class MultModule
     if (internalOpts.mEnabledTables[kMultsExtra]) {
       cursors.tableExtra(collision.numContrib(), collision.chi2(), collision.collisionTimeRes(),
                          bc.runNumber(), collision.posZ(), collision.sel8(),
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multHasITS,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multHasTPC,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multHasTOF,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multHasTRD,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multITSOnly,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multTPCOnly,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multITSTPC,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multAllTracksTPCOnly,
-                         static_cast<int>(internalOpts.doNTrackStudies) * mults.multAllTracksITSTPC,
+                         mults.multHasITS, mults.multHasTPC, mults.multHasTOF, mults.multHasTRD,
+                         mults.multITSOnly, mults.multTPCOnly, mults.multITSTPC,
+                         mults.multAllTracksTPCOnly, mults.multAllTracksITSTPC,
                          collision.trackOccupancyInTimeRange(),
                          collision.ft0cOccupancyInTimeRange(),
                          collision.flags());
@@ -940,6 +928,8 @@ class MultModule
     int multFT0C = 0;
     int multFDDA = 0;
     int multFDDC = 0;
+    int multITSIB = 0;
+    int multMFT = 0;
     int multBarrelEta05 = 0;
     int multBarrelEta08 = 0;
     int multBarrelEta10 = 0;
@@ -957,12 +947,15 @@ class MultModule
         continue; // reject neutral particles in counters
       }
 
-      if (std::abs(mcPart.eta()) < 1.0) {
-        multBarrelEta10++;
-        if (std::abs(mcPart.eta()) < 0.8) {
-          multBarrelEta08++;
-          if (std::abs(mcPart.eta()) < 0.5) {
-            multBarrelEta05++;
+      if (std::abs(mcPart.eta()) < 2.0) {
+        multITSIB++;
+        if (std::abs(mcPart.eta()) < 1.0) {
+          multBarrelEta10++;
+          if (std::abs(mcPart.eta()) < 0.8) {
+            multBarrelEta08++;
+            if (std::abs(mcPart.eta()) < 0.5) {
+              multBarrelEta05++;
+            }
           }
         }
       }
@@ -976,8 +969,10 @@ class MultModule
         multFDDC++;
       if (4.7 < mcPart.eta() && mcPart.eta() < 6.3)
         multFDDA++;
+      if (-3.6 < mcPart.eta() && mcPart.eta() < -2.45)
+        multMFT++;
     }
-    cursors.tableExtraMc(multFT0A, multFT0C, multFV0A, multFDDA, multFDDC, multBarrelEta05, multBarrelEta08, multBarrelEta10, mccollision.posZ());
+    cursors.tableExtraMc(multFT0A, multFT0C, multFV0A, multFDDA, multFDDC, multBarrelEta05, multBarrelEta08, multBarrelEta10, multITSIB, multMFT, mccollision.posZ());
   }
 
   //__________________________________________________
@@ -1241,11 +1236,11 @@ class MultModule
         // invoke loading only for requested centralities
         if (internalOpts.mEnabledTables[kCentFV0As])
           getccdb(fv0aInfo, internalOpts.generatorName);
-        if (internalOpts.mEnabledTables[kCentFT0Ms] || internalOpts.mEnabledTables[kBCCentFT0Ms])
+        if (internalOpts.mEnabledTables[kCentFT0Ms])
           getccdb(ft0mInfo, internalOpts.generatorName);
-        if (internalOpts.mEnabledTables[kCentFT0As] || internalOpts.mEnabledTables[kBCCentFT0As])
+        if (internalOpts.mEnabledTables[kCentFT0As])
           getccdb(ft0aInfo, internalOpts.generatorName);
-        if (internalOpts.mEnabledTables[kCentFT0Cs] || internalOpts.mEnabledTables[kBCCentFT0Cs])
+        if (internalOpts.mEnabledTables[kCentFT0Cs])
           getccdb(ft0cInfo, internalOpts.generatorName);
         if (internalOpts.mEnabledTables[kCentFT0CVariant1s])
           getccdb(ft0cVariant1Info, internalOpts.generatorName);
