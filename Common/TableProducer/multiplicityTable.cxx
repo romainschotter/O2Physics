@@ -194,7 +194,7 @@ struct MultiplicityTable {
     bool tEnabled[Ntables] = {false};
     for (int i = 0; i < Ntables; i++) {
       int f = enabledTables->get(tableNames[i].c_str(), "Enable");
-      o2::common::core::enableFlagIfTableRequired(context, tableNames[i], f);
+      enableFlagIfTableRequired(context, tableNames[i], f);
       if (f == 1) {
         tEnabled[i] = true;
         mEnabledTables.push_back(i);
@@ -696,6 +696,8 @@ struct MultiplicityTable {
     int multBarrelEta05 = 0;
     int multBarrelEta08 = 0;
     int multBarrelEta10 = 0;
+    int multITSIB = 0;
+    int multMFT = 0;
     for (auto const& mcPart : mcParticles) {
       if (!mcPart.isPhysicalPrimary()) {
         continue;
@@ -710,12 +712,15 @@ struct MultiplicityTable {
         continue; // reject neutral particles in counters
       }
 
-      if (std::abs(mcPart.eta()) < 1.0) {
-        multBarrelEta10++;
-        if (std::abs(mcPart.eta()) < 0.8) {
-          multBarrelEta08++;
-          if (std::abs(mcPart.eta()) < 0.5) {
-            multBarrelEta05++;
+      if (std::abs(mcPart.eta()) < 2.0) {
+        multITSIB++;
+        if (std::abs(mcPart.eta()) < 1.0) {
+          multBarrelEta10++;
+          if (std::abs(mcPart.eta()) < 0.8) {
+            multBarrelEta08++;
+            if (std::abs(mcPart.eta()) < 0.5) {
+              multBarrelEta05++;
+            }
           }
         }
       }
@@ -729,8 +734,10 @@ struct MultiplicityTable {
         multFDDC++;
       if (4.7 < mcPart.eta() && mcPart.eta() < 6.3)
         multFDDA++;
+      if (-3.6 < mcPart.eta() && mcPart.eta() < -2.45)
+        multMFT++;
     }
-    tableExtraMc(multFT0A, multFT0C, multFV0A, multFDDA, multFDDC, multBarrelEta05, multBarrelEta08, multBarrelEta10, mcCollision.posZ());
+    tableExtraMc(multFT0A, multFT0C, multFV0A, multFDDA, multFDDC, multBarrelEta05, multBarrelEta08, multBarrelEta10, multITSIB, multMFT, mcCollision.posZ());
   }
 
   void processMC2Mults(soa::Join<aod::McCollisionLabels, aod::Collisions>::iterator const& collision)
